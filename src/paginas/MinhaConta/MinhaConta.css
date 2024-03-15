@@ -1,0 +1,31 @@
+.minha-conta__titulo {
+    padding: 32px 0;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: #FFF;
+    background: linear-gradient(97.54deg, #002F52 35.49%, #326589 165.37%);
+}
+
+.minha-conta__container {
+    display: flex;
+    width: 80%;
+    margin: 40px auto;
+    column-gap: 40px;
+}
+
+.minha-conta__menu li {
+    padding: 12px 36px;
+    text-align: center;
+    border-bottom: 1px solid #0E3E61;
+    font-size: 16px;
+}
+
+.minha-conta__menu li a {
+    text-decoration: none;
+    color: #002F52;
+}
+
+.minha-conta__menu li a.active {
+    font-weight: 700;
+}

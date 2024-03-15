@@ -1,0 +1,19 @@
+.pedidos__container {
+    width: 100%;
+}
+
+.pedidos__titulo {
+    margin: 0 auto;
+}
+
+.pedidos__pedido {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    border-bottom: 1px solid #002F52;
+    padding: 40px 0;
+}
+
+.pedidos__pedido:nth-of-type(1){
+    padding-top: 20px;
+}

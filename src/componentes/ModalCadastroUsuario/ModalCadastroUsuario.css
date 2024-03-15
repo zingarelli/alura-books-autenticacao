@@ -1,0 +1,24 @@
+.corpoModalCadastro {
+    display: flex;
+    align-items: center;
+    column-gap: 20px;
+    padding-top: 16px;
+}
+
+.corpoModalCadastro form {
+    width: 500px;
+    max-width: 80%;
+}
+
+.corpoModalCadastro form>div {
+    margin-bottom: 12px;
+}
+
+.campoModalCompartilhado {
+    display: flex;
+    justify-content: space-between;
+}
+
+.corpoModalCadastro footer {
+    text-align: center;
+}

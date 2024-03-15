@@ -1,0 +1,42 @@
+.corpoModalLogin {
+    display: flex;
+    column-gap: 20px;
+    align-items: center;
+}
+
+.corpoModalLogin form {
+    width: 450px;
+}
+
+.corpoModalLogin form>div {
+    margin-bottom: 20px;
+}
+
+.corpoModalLogin footer, 
+.corpoModalLogin section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+}
+
+.corpoModalLogin .esqueceuLink{    
+    align-self: flex-start;
+    font-weight: 400;
+    text-transform: none;
+    text-decoration: underline;
+    color: #002F52;
+}
+
+.corpoModalLogin section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid;
+    border-image: linear-gradien(#002F52, #326589);
+}
+
+.corpoModalLogin section h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #002F52;
+}
