@@ -1,5 +1,8 @@
 import axios from "axios";
 import { useGetToken } from "../hooks/token";
+import { ICategoria } from "../interfaces/ICategoria";
+import { ILivro } from "../interfaces/ILivro";
+import { IAutor } from "../interfaces/IAutor";
 
 // cria uma instância do axios com algumas configurações comuns
 const http = axios.create({
@@ -39,3 +42,58 @@ http.interceptors.response.use(function (response) {
 });
 
 export default http
+
+// outras funções específicas de data fetching
+
+// endpoint: /categorias/?slug=slug
+export const obterCategoriaPorSlug = async (slug: string) => {
+    const resp = await http.get<ICategoria[]>('categorias', {
+        params: {
+            slug
+        }
+    })
+    // a API retorna os dados em um array. Como há somente 
+    // uma categoria, retorno o primeiro dado.
+    return resp.data[0];
+}
+
+// endpoint: /livros/?categoria=id
+export const obterProdutosDaCategoria = async (categoria: ICategoria) => {
+    const resp = await http.get<ILivro[]>('livros', {
+        params: {
+            categoria: categoria.id
+        }
+    })
+    return resp.data;
+}
+
+// endpoint: /livros/?slug=slug
+export const obterLivroPorSlug = async (slug: string) => {
+    const resp = await http.get<ILivro[]>('livros', {
+        params: {
+            slug
+        }
+    })
+    // programação defensiva para o caso de não encontrar o livro
+    if (resp.data.length === 0) return null;
+    return resp.data[0];
+}
+
+export const obterLancamentos = async () => {
+    const resp = await http.get<ILivro[]>('public/lancamentos')
+    return resp.data;
+}
+
+export const obterMaisVendidos = async () => {
+    const resp = await http.get<ILivro[]>('public/mais-vendidos')
+    return resp.data;
+}
+
+export const obterAutorPorId = async (id: number | '') => {
+    try{
+        const resp = await http.get<IAutor>(`autores/${id}`);
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}

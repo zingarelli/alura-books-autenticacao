@@ -3,14 +3,9 @@ import "./Pedidos.css"
 import { useEffect, useState } from "react";
 import { IPedido } from "../../interfaces/IPedido";
 import http from "../../http";
+import { formataData, formataMoeda } from "../../utils/formatadores";
 
 const urlPedidos = 'pedidos';
-const formataMoeda = Intl.NumberFormat('pt-br', { style: 'currency', currency: 'BRL' });
-const formataData = (data: Date) => {
-    const timezoneOffset = data.getTimezoneOffset()
-    data.setMinutes(data.getMinutes() + timezoneOffset)
-    return data.toLocaleDateString()
-}
 
 const Pedidos = () => {
     const [pedidos, setPedidos] = useState<IPedido[]>([]);

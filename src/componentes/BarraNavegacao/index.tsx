@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import BotaoNavegacao from "../BotaoNavegacao"
 import logo from './assets/logo.png'
@@ -7,12 +7,15 @@ import './BarraNavegacao.css'
 import ModalCadastroUsuario from "../ModalCadastroUsuario"
 import ModalLogin from "../ModalLogin"
 import { useGetToken, useLimparToken } from "../../hooks/token"
+import { ICategoria } from "../../interfaces/ICategoria"
+import http from "../../http"
 
 const BarraNavegacao = () => {
     const token = useGetToken();
     const [modalCadastroAberta, setModalCadastroAberta] = useState(false);
     const [modalLoginAberta, setModalLoginAberta] = useState(false);
     const [usuarioLogado, setUsuarioLogado] = useState(token !== null);
+    const [categorias, setCategorias] = useState<ICategoria[]>([]);
     const navigate = useNavigate()
     const removerToken = useLimparToken();
 
@@ -22,6 +25,14 @@ const BarraNavegacao = () => {
         // retorna à página principal após o logout
         navigate('/');
     }
+
+    useEffect(() => {
+        http.get<ICategoria[]>('categorias')
+            .then(res => {
+                setCategorias(res.data)
+            })
+            .catch(err => console.log(err))
+    }, [])
 
     return (<nav className="ab-navbar">
         <h1 className="logo">
@@ -33,31 +44,13 @@ const BarraNavegacao = () => {
             <li>
                 <a href="#!">Categorias</a>
                 <ul className="submenu">
-                    <li>
-                        <Link to="/">
-                            Frontend
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/">
-                            Programação
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/">
-                            Infraestrutura
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/">
-                            Business
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/">
-                            Design e UX
-                        </Link>
-                    </li>
+                    {categorias.map(categoria => (
+                        <li key={categoria.id}>
+                            <Link to={`/categorias/${categoria.slug}`}>
+                                {categoria.nome}
+                            </Link>
+                        </li>
+                    ))}
                 </ul>
             </li>
         </ul>
@@ -100,9 +93,9 @@ const BarraNavegacao = () => {
                     <Link to='/minha-conta/pedidos'>Minha conta</Link>
                 </li>
                 <li>
-                    <BotaoNavegacao 
-                        imagemSrc={usuario} 
-                        textoAltSrc="Ícone representando um usuário" 
+                    <BotaoNavegacao
+                        imagemSrc={usuario}
+                        textoAltSrc="Ícone representando um usuário"
                         texto="Sair"
                         onClick={deslogar}
                     />

@@ -1,0 +1,10 @@
+.tituloPrincipal {
+    width: 100%;
+    background: linear-gradient(90deg, #002F52, 85%, #326589);
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 54px;
+    color: #fff;
+    text-align: center;
+    padding: 33px 0;
+}

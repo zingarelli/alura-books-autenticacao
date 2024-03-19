@@ -1,16 +1,16 @@
-# Lidando com autenticação do usuário
+# Alura Books desenvolvida em TypeScript
 
-Neste projeto temos algumas telas já implementadas para um e-commerce de livros chamado Alura Books. Nosso objetivo é possibilitar que uma pessoa usuária possa fazer login na aplicação e ter autorização para acessar uma página de pedidos. Para isso, utilizamos tecnologias como o Axios e JWT para autenticação e autorização via token.
+Neste projeto, temos algumas telas já implementadas para um e-commerce de livros chamado Alura Books. Nosso objetivo é evoluir a aplicação, adicionando novas telas, fazendo comunicação com uma API e implementando políticas de autenticação/autorização. 
 
 | :placard: Vitrine.Dev |     |
 | -------------  | --- |
-| :sparkles: Nome        | **React: autenticação com Axios e JWT**
-| :label: Tecnologias | Axios, JWT, TypeScript, React
+| :sparkles: Nome        | **Evolução Alura Books**
+| :label: Tecnologias | ReactQuery, Axios, JWT, TypeScript, React
 | :rocket: URL         | 
 | :fire: Curso     | https://cursos.alura.com.br/course/react-autenticando-usuarios
 
 
-![](https://github.com/zingarelli/codechella/assets/19349339/cb246c60-c549-4775-8045-0b4f31e8c00a#vitrinedev)
+![](https://github.com/zingarelli/alura-books-autenticacao/assets/19349339/1da53376-fb45-43b7-ba02-b721e983b6b0#vitrinedev)
 
 ## Créditos
 
@@ -19,6 +19,26 @@ O projeto foi adaptado a partir deste [repositório da Alura](https://github.com
 A parte de autenticação e obtenção dos pedidos é feita por meio de consultas a uma API, que é mockada com o uso do json-server e JWT, ou seja, roda localmente. A API pode ser obtida [neste repositório](https://github.com/viniciosneves/api-alurabooks).
 
 ## Detalhes do projeto
+
+Este é um projeto em evolução que é construído nos cursos da trilha de formação da Alura, chamada de ["React: consumindo APIs"](https://cursos.alura.com.br/formacao-react-consumindo-apis). Em cada curso, lidamos com um tópico diferente (autenticação, data fetch e GraphQL). Detalhes sobre o projeto e cada tópico aprendido são dados nas seções a seguir.
+
+*Observação:* a formação inicia com um curso sobre desenvolvimento de biblioteca de componentes, que incluiu a utilização do Storybook e publicação no NPM. O projeto está separado [neste outro repositório](https://github.com/zingarelli/alura-books-ds), pois houve problemas de incompatibilidade com o projeto inicial disponibilizado para acompanhamento dos outros cursos, então a biblioteca que eu desenvolvi não pôde ser reaproveitada.
+
+O código foi desenvolvido em React com TypeScript. Há comunicação com uma API mockada rodando localmente. Por meio dela é possível fazer o login/cadastro da pessoa usuária, além de requisições para obter dados de pedidos, categorias, livros e autores. Utilizamos o Axios e o React Query para fazer requisições e consultas à API. Na [Seção sobre Instalação](#instalação) há detalhes de como instalar e subir a API.
+
+Páginas construídas:
+
+- Modal de Login;
+
+- Modal de cadastro;
+
+- Página de pedidos: somente pode ser acessada após login. Internamente, é enviado um token de acesso à API para conseguir consultar os pedidos;
+
+- Livros por categoria: ao selecionar uma categoria no menu superior do site, a página é carregada com os livros dessa categoria;
+
+- Detalhes de um livro: ao clicar no botão "Comprar" de um livro, é carregada a página de detalhes desse livro, além de opções para escolher o formato (e-book, impresso, combo) e quantidade;
+
+## Lidando com autenticação
 
 Foram desenvolvidas novas telas para a aplicação, com o objetivo de lidar com autenticação e autorização da pessoa usuária. Na parte de autenticação, é feito o login da pessoa por meio de e-mail e senha, e um token é salvo na sessionStorage do navegador. Na parte de autorização, a pessoa pode acessar uma página de pedidos e ver seus pedidos, mas para isso é necessário recuperar esses dados via API, passando o token recebido durante a autenticação. 
 
@@ -148,6 +168,89 @@ axios.get(urlPedidos)
 
 - Modelo de arquitetura REST, alguns de seus princípios e como ele é usado em aplicações Web, aliado com o protocolo HTTP: https://www.alura.com.br/artigos/rest-principios-e-boas-praticas
 
+## Obtenção de dados (data fetching)
+
+Existem alguns padrões que podem ser seguidos para o data fetching:
+
+- standalone: o componente que precisa dos dados é o responsável por fazer a requisição para obtenção desses dados (via fetch, axios, etc.);
+
+- Higher-Order Component (HOC): um "componente de alta ordem" nesse caso será o responsável pela obtenção e tratamento dos dados. Ele recebe um componente de entrada, faz o data fetching necessário e retorna novamente o componente recebido, mas enviando via props os dados obtidos. Assim, temos um HOC responsável pelo data fetching e outros componentes responsáveis somente pela UI;
+
+- Hooks customizados: encapsulamos todo o processamento do data fetching em um hook customizado, que retorna esses dados quando utilizado.
+
+### React Query
+
+É uma biblioteca famosa que se oferece como alternativa ao data fetching e ao gerenciamento dos estados do servidor.
+
+Necessário instalar. No curso, foi utilizada a versão 4.6.0.
+
+    npm i @tanstack/react-query@4.6.0
+
+**Observação:** a partir da versão 5, algumas funções foram alteradas (o `useQuery` é uma delas). Então as explicações deste README **valem para a versão 4** e podem não estar mais corretas para a versão 5.
+
+De uma maneira semelhante a como estruturamos o código para uso da Context API, para que componentes possam usar o que o React Query oferece, eles devem ser descendentes de um componente chamado `<QueryClientProvider>`. Este componente requer uma instância da classe `QueryClient`. Exemplo de código:
+
+```ts
+// cliente para efetuar o data fetching
+const queryClient = new QueryClient();
+
+function App() {
+  return (
+    // componente que disponibiliza o React Query para seus componentes-filhos
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Rotas />
+      </BrowserRouter>
+    </QueryClientProvider>
+  );
+}
+```
+
+#### Hook `useQuery`
+
+Para obter dados da API, podemos usar o **hook `useQuery`**, passando dois parâmetros: uma `queryKey` e uma `queryFn`.
+
+- a `queryKey` é um array que contém uma string que você passa para dar um nome único para a query. Caso a função em `queryFn` use variáveis que podem mudar de valor, você passa a variável como próximo elemento no array (é mais fácil entender no código de exemplo a seguir);
+
+- a `queryFn` é uma função que você define para fazer de fato a obtenção dos dados (a "query"). Essa função deve retornar uma promise ou um erro.
+
+A `useQuery` retorna uma série de propriedades. Dentre elas estão:
+
+- `data`: retorna os dados da promise, caso tenha sido executada com sucesso;
+
+- `isLoading`: um booleano que informa se a query já terminou;
+
+- `error`: para caso alguma coisa dê errada.
+
+Ambos `data` e `isLoading` são parecidos com variáveis de estado (que você não precisa se preocupar em declarar ou gerenciar), sendo atualizadas pelo próprio `useQuery` e **causam um re-render no componente** quando mudam.
+
+Consulte a [documentação](https://tanstack.com/query/v4/docs/framework/react/reference/useQuery) para mais informação sobre outros parâmetros e propriedades.
+
+Você pode tipar `data` e `error`. Para isso, use dois generics em `useQuery`, sendo que o primeiro irá tipar `data` e o segundo, `error`. Veja no exemplo:
+
+Exemplo de código:
+
+```ts
+const { slug } = useParams();
+
+// data fetching com React Query
+// no destructuring, posso renomear uma propriedade passando o novo nome após ":"
+const { data: categoria, isLoading, error } = useQuery<ICategoria, AxiosError>(
+    // queryKey é o primeiro parâmetro e está passando a variável slug como dependência
+    ['categoriaPorSlug', slug], 
+    // queryFn é o segundo parâmetro e está chamando uma função definida em outro código
+    () => obterCategoriaPorSlug(slug || '')
+)
+
+if (error) {
+        console.log(error.message);
+        return <h1>Que vergonha! Alguma coisa deu errado!</h1>
+    }
+
+// renderiza um ícone de loading enquanto os dados não foram carregados
+if (isLoading) return <Loader />
+```
+
 ## Dicas extras
 
 - O React possui a biblioteca `Intl` que auxilia na internacionalização de alguns dados, devolvendo-os formatado adequadamente à localização da pessoa usuária. Por exemplo, para devolver um número no formato da moeda brasileira, podemos criar uma função formatadora:
@@ -168,6 +271,8 @@ const formataData = (data: Date) => {
 console.log(formataData(new Date("2022-08-01"))) // 01/08/2022
 console.log(new Date("2022-08-01").toLocaleDateString()) // 31/07/2022
 ```
+
+- O site [Loading.io](https://loading.io/css) disponibiliza 12 ícones diferentes de loading feitos puramente com CSS. Você pode selecionar o que deseja e copiar o HTML/CSS para renderizá-lo em sua página. Esses ícones estão gratuitos, sob a [licença CC0](https://creativecommons.org/public-domain/cc0/).
 
 ## Instalação
 

@@ -3,6 +3,8 @@ import Home from "../paginas/Home"
 import PaginaBase from "../paginas/PaginaBase"
 import MinhaConta from "../paginas/MinhaConta"
 import Pedidos from "../paginas/Pedidos"
+import Categoria from "../paginas/Categoria"
+import DetalheLivro from "../paginas/DetalheLivro"
 
 
 const Rotas = () => {
@@ -12,6 +14,8 @@ const Rotas = () => {
         <Route path='minha-conta' element={<MinhaConta />}>
           <Route path="pedidos" element={<Pedidos />} />
         </Route>
+        <Route path='categorias/:slug' element={<Categoria />} />
+        <Route path='livro/:slug' element={<DetalheLivro />} />
       </Route>
     </Routes>)
 }
