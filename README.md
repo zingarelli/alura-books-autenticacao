@@ -1,11 +1,11 @@
-# Alura Books desenvolvida em TypeScript
+# Alura Books versão TypeScript
 
-Neste projeto, temos algumas telas já implementadas para um e-commerce de livros chamado Alura Books. Nosso objetivo é evoluir a aplicação, adicionando novas telas, fazendo comunicação com uma API e implementando políticas de autenticação/autorização. 
+Neste projeto, temos algumas telas já implementadas para um e-commerce de livros chamado Alura Books. Nosso objetivo é evoluir a aplicação, fazendo requisições a uma API para criar novas telas e implementar políticas de autenticação/autorização. Para isso, utilizamos inicialmente Axios, passamos pelo React Query e finalizamos com Apollo Cliente e GraphQL.
 
 | :placard: Vitrine.Dev |     |
 | -------------  | --- |
 | :sparkles: Nome        | **Evolução Alura Books**
-| :label: Tecnologias | ReactQuery, Axios, JWT, TypeScript, React
+| :label: Tecnologias | GraphQL, ReactQuery, Apollo Client, Axios, JWT, TypeScript, React
 | :rocket: URL         | 
 | :fire: Curso     | https://cursos.alura.com.br/course/react-autenticando-usuarios
 
@@ -18,13 +18,15 @@ O projeto foi adaptado a partir deste [repositório da Alura](https://github.com
 
 A parte de autenticação e obtenção dos pedidos é feita por meio de consultas a uma API, que é mockada com o uso do json-server e JWT, ou seja, roda localmente. A API pode ser obtida [neste repositório](https://github.com/viniciosneves/api-alurabooks).
 
+Uma segunda API mockada é utilizada nos cursos de Apollo Client e GraphQL. O projeto pode ser obtido neste [outro repositório](https://github.com/alura-cursos/alurabooks-gql). 
+
 ## Detalhes do projeto
 
-Este é um projeto em evolução que é construído nos cursos da trilha de formação da Alura, chamada de ["React: consumindo APIs"](https://cursos.alura.com.br/formacao-react-consumindo-apis). Em cada curso, lidamos com um tópico diferente (autenticação, data fetch e GraphQL). Detalhes sobre o projeto e cada tópico aprendido são dados nas seções a seguir.
+Este é um projeto em evolução que é construído nos cursos da trilha de formação da Alura, chamada de ["React: consumindo APIs"](https://cursos.alura.com.br/formacao-react-consumindo-apis). Em cada curso, lidamos com um tópico diferente (autenticação, React Query e GraphQL). Detalhes sobre o projeto e cada tópico aprendido são dados nas seções a seguir.
 
-*Observação:* a formação inicia com um curso sobre desenvolvimento de biblioteca de componentes, que incluiu a utilização do Storybook e publicação no NPM. O projeto está separado [neste outro repositório](https://github.com/zingarelli/alura-books-ds), pois houve problemas de incompatibilidade com o projeto inicial disponibilizado para acompanhamento dos outros cursos, então a biblioteca que eu desenvolvi não pôde ser reaproveitada.
+*Observação:* a formação inicia com um curso sobre desenvolvimento de uma biblioteca de componentes, que incluiu a utilização do Storybook e publicação no NPM. O projeto está separado [neste outro repositório](https://github.com/zingarelli/alura-books-ds), pois houve problemas de incompatibilidade com o projeto inicial disponibilizado para acompanhamento dos outros cursos, então a biblioteca que eu desenvolvi não pôde ser reaproveitada.
 
-O código foi desenvolvido em React com TypeScript. Há comunicação com uma API mockada rodando localmente. Por meio dela é possível fazer o login/cadastro da pessoa usuária, além de requisições para obter dados de pedidos, categorias, livros e autores. Utilizamos o Axios e o React Query para fazer requisições e consultas à API. Na [Seção sobre Instalação](#instalação) há detalhes de como instalar e subir a API.
+O código foi desenvolvido em React com TypeScript. Há comunicação com uma API mockada rodando localmente. Por meio dela é possível fazer o login/cadastro da pessoa usuária, além de requisições para obter dados de pedidos, categorias, livros e autores. Utilizamos tanto o Axios e o [React Query](#react-query), quanto o [Apollo Client e GraphQL](#apollo-client-e-graphql) para fazer requisições e consultas à API. Na [Seção sobre Instalação](#instalação) há detalhes de como instalar e subir cada API.
 
 Páginas construídas:
 
@@ -251,6 +253,292 @@ if (error) {
 if (isLoading) return <Loader />
 ```
 
+## Apollo Client e GraphQL
+
+Assim como o React Query, o [Apollo Client](https://www.apollographql.com/docs/react/get-started) é outra biblioteca que pode ser utilizada para o data fetching e para gerenciamento de estados de dados. Agora, diferente do React Query, o Apollo Client atua em **conjunto com o GraphQL**. 
+
+O [**GraphQL**](https://graphql.com/learn/what-is-graphql/) é um tipo de "query language" desenvolvida pelo Facebook para interagir com APIs de forma flexível e eficiente. Flexível porque você pode fazer requisições a **diferentes "endpoints" e bases de dados** em uma única solicitação, e eficiente porque **você escolhe os dados que quer receber** do back-end, e não tudo de uma vez (ao invés de retornar um JSON completo da base de dados, o GraphQL retorna somente os campos que você pedir, reduzindo o tráfego de rede). Esse é somente um exemplo de algumas das vantagens.
+
+- Ele acaba sendo uma camada intermediária de comunicação entre o Front e o Back-End. O Front diz para ele o que quer receber, e ele se encarrega de ir no Back obter esses dados e devolver somente o que foi pedido.
+
+Instalação das dependências de ambas as tecnologias:
+
+```bash
+npm install @apollo/client graphql
+```
+
+Bem parecido com o visto na [Seção de React Query](#react-query), para fazer as consultas precisamos instanciar um cliente e adicionar um componente provedor para que subcomponentes possam utilizar o Apollo Client e consumir dados da API. Exemplo:
+
+```ts
+// cliente com algumas configurações necessárias
+const client = new ApolloClient({
+    // endereço para o servidor GraphQL
+    uri: 'http://localhost:9000/graphql', 
+    // configuração necessária para informar onde o resultado
+    // das queries será cacheado (armazenado). A classe InMemoryCache 
+    // é a comumente utilizada
+    cache: new InMemoryCache(), 
+})
+
+function App() {
+  return (
+    <ApolloProvider client={client}>
+      <BrowserRouter>
+        <Rotas />
+      </BrowserRouter>
+    </ApolloProvider>
+  );
+}
+```
+
+### Playground
+
+Ao subir o servidor do GraphQL, é disponibilizado na URL http://localhost:9000/graphql uma espécie de "playground" em que você pode fazer suas queries e ver o retorno na tela. Há inclusive um autocomplete de campos possíveis de serem pesquisados (comando CTRL + Espaço). Com isso, você pode fazer os testes necessários até chegar no resultado desejado e aí copiar a query para colá-la no código da aplicação de fato.
+
+### Query
+
+Uma query é feita solicitando os campos (fields) que você quer de um objeto que a API retorna (as propriedades do objeto). Quando um campo também é um objeto, você tem que informar novamente quais campos você quer desse outro objeto e assim por diante.
+
+Por exemplo, suponha que a API retorne o seguinte no endpoint `/livros`:
+
+```ts
+[
+  {
+    "id": 1,
+    "titulo": "Acessibilidade na Web",
+    "opcoesCompra": [
+      {
+        "id": 1,
+        "titulo": "E-book",
+        "preco": 29.9,
+      },
+      {
+        "id": 2,
+        "titulo": "Impresso",
+        "preco": 39.9
+      },     
+    ]
+  },
+  {
+    "id": 2,
+    // ...
+  },
+  //   ...
+]
+```
+
+Uma query para obter as propriedades (campos) `id`, `titulo` e `preco` dos livros seria:
+
+```graphql
+livros {
+  id
+  titulo
+  # opcoesCompra é um objeto, então preciso especificar qual campo eu quero desse objeto
+  opcoesCompra {
+    preco
+  }
+}
+```
+
+O retorno da query é um objeto com uma propriedade `data`. Essa propriedade contém outro objeto, este sim de fato com o conteúdo retornado pela API para os campos solicitados.
+
+```json
+{
+  "data": {
+    "livros": [
+      {
+        "id": 1,
+        "titulo": "Acessibilidade na Web",
+        "opcoesCompra": [
+          {
+            "preco": 29.9
+          },
+          {
+            "preco": 39.9
+          },
+          {
+            "preco": 59.9
+          }
+        ]
+      },
+      // ...
+    ]
+  }
+}
+```
+
+### Mais um hook `useQuery` 
+
+No código, as queries são feitas usando template literals com a função `gql` (essa junção de uma função e template literals é chamado de [tagged template](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#tagged_templates)). Exemplo:
+
+```ts
+const OBTER_LIVROS = gql`
+  query ObterLivros {
+    livros {
+      id,
+      imagemCapa,
+      slug,
+      titulo,
+      opcoesCompra {
+        preco,
+        id
+      }
+    }
+  }
+`
+```
+
+Para executar essa query e receber o resultado, usamos o hook `useQuery` (atenção na hora de importar, já que o React Query tem um hook de mesmo nome). Ele espera como parâmetro um tagged template. Exemplo:
+
+```tsx
+const ListaLivros = ({ categoria }: ListaLivrosProps) => {
+    // solução com o React Query 
+    // const { data: produtos, isLoading } = useQuery(
+    //     ['buscaLivrosPorCategoria', categoria],
+    //     () => obterProdutosDaCategoria(categoria)
+    // )
+
+    // solução com GraphQL
+    // tipando o campo "livros" retornado pelo "data" do useQuery
+    const { data } = useQuery<{ livros: ILivro[] }>(OBTER_LIVROS)
+
+    return <section className="livros">
+        {/* com o React Query */}
+        {/* {produtos?.map(livro => <MiniCard livro={livro} key={livro.id} />)} */}
+
+        {/* com GraphQL */}
+        {data?.livros.map(livro => <MiniCard livro={livro} key={livro.id} />)}
+    </section>
+}
+```
+
+- Semelhante ao `useQuery` do React Query, a propriedade `data` causa um **re-render do componente** quando atualizada.
+
+- Também semelhante ao `useQuery` do React Query, temos uma propriedade que retorna um booleano quando a query é finalizada, só que neste caso ela é chamada de `loading` (no hook do React Query é `isLoading`).
+
+### Usando parâmetros
+
+Com o GraphQL, podemos também **criar variáveis e usá-las como argumentos para os campos das queries**, desse modo filtrando quais resultados para um campo queremos que a query traga.
+
+A variável é definida entre parênteses após o nome da query. O nome da variável deve iniciar com `$` e pode ser qualquer nome (ou seja, no exemplo abaixo `$categoriaId` podia ser `$catId` ou qualquer outra coisa). Ela precisa ter um tipo (o GraphQL tem seu próprio conjunto de tipos e também é possível definir novos tipos). Você passa a variável como argumento para algum campo (novamente entre parênteses), associando a variável ao campo que você quer filtrar.
+
+Por exemplo, se queremos obter livros de uma categoria específica, podemos fazer: 
+
+```ts
+const OBTER_LIVROS = gql`
+  query ObterLivros($categoriaId: Int) {
+    livros(categoriaId: $categoriaId) {
+      id,
+      imagemCapa,
+      slug,
+      titulo,
+      opcoesCompra {
+        preco,
+        id
+      }
+    }
+  }
+`
+```
+
+No `useQuery`, passamos o valor para a variável usando o segundo argumento do hook, por meio de um objeto que tem uma propriedade chamada `variables`:
+
+```ts
+const { data } = useQuery<{ livros: ILivro[] }>(OBTER_LIVROS, {
+    variables: {
+        categoriaId: categoria.id
+    }
+})
+```
+
+- os parâmetros são opcionais. Quando não enviados à query, ela executa como se não houvesse um filtro. Ou seja, no exemplo acima, caso nenhum parâmetro fosse enviado, `data` retornaria os campos solicitados para os livros de todas as categorias.
+
+### `refetch`
+
+O hook `useQuery` também retorna uma função `refetch`. Com ela, é possível reaproveitar a busca do useQuery e fazer uma nova requisição, passando outras variáveis à busca. O resultado da busca será retornado em `data` novamente (sobrescreve o que já tinha em `data`). 
+
+Por exemplo, a busca por livros poderia ser por categoria ou por título:
+
+```graphql
+# query no graphQL
+query ObterLivros($categoriaId: Int, $titulo: String) {
+    livros(categoriaId: $categoriaId, titulo: $titulo) {
+      # ...
+    }
+```
+
+Podemos então usar o `useQuery` uma vez para obter os livros de uma categoria, e então em outro momento usar o `refetch` para filtrar esses livros também pelo título (pense numa busca por título de uma galeria de livros de uma categoria, por exemplo).
+
+```ts
+// busca por uma categoria
+const { data, refetch } = useQuery<{ livros: ILivro[] }>(OBTER_LIVROS, {
+    variables: {
+      categoriaId: categoria.id
+    }
+  })
+
+// reaproveitando a consulta para buscar também pelo título 
+const buscarLivros = (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  if (textoDaBusca) {
+    // o refetch recebe como parâmetro um objeto com variáveis para a query
+    refetch({
+      categoriaId: categoria.id,
+      titulo: textoDaBusca
+    })      
+  }
+}
+```
+
+### Variáveis reativas
+
+É uma forma de **gerenciar estados locais**, disponibilizada pelo Apollo Client. Similar ao `useState`, quando um componente usa uma variável reativa (por meio do rook `useReactiveVar`), ele será **re-renderizado caso essa variável reativa seja atualizada**. No entanto, diferente do `useState`, que só pode ser utilizado em componentes, uma variável reativa pode ser utilizada em outras partes da aplicação, e não somente em componentes.
+
+Para criar uma variável reativa, é utilizado o método `makevar`. Ele irá devolver uma **função**, que atua tanto como um getter quanto um setter da variável reativa. Ou seja, para obter o valor de uma variável reativa, você chama a função sem argumentos; já para modificar o valor da variável reativa, você chama a função e passa como argumento o novo valor que você quer atribuir à variável reativa.
+
+- uma convenção é adicionar o sufixo -Var para o nome da  variável reativa.
+
+```ts
+// criando uma variável reativa 
+export const livrosVar = makeVar<ILivro[]>([]);
+
+// acessando o valor da variável reativa
+console.log(livrosVar());
+
+// setando um novo valor à variável reativa
+livrosVar(data.livros)
+```
+
+No caso de componentes, é disponibilizado o hook `useReactiveVar`, com o qual você pode atribuir uma variável reativa a uma variável do componente. Desse modo, será possível tanto usar o valor da variável reativa, quanto fazer com que o componente re-renderize caso a variável reativa seja modificada.
+
+```ts
+const livros = useReactiveVar(livrosVar)
+```
+
+- se fosse usado `const livros = livrosVar()`, a variável `livros`somente receberia o *valor* de `livrosVar`, mas não se tornaria uma variável de estado (o componente não re-renderizaria caso `livrosVar` fosse modificado).
+
+
+#### Unindo variáveis reativas com o `useQuery`
+
+Podemos atualizar o valor de uma variável reativa usando outra opção disponível no segundo parâmetro do `useQuery`: a função callback `onCompleted`. Essa função é chamada quando a query é finalizada com sucesso.
+
+```ts
+export const useLivros = (categoria: ICategoria) => {
+    // tipando o campo "livros" retornado pelo "data" do useQuery
+    return useQuery<{ livros: ILivro[] }>(OBTER_LIVROS, {
+        variables: {
+            categoriaId: categoria.id
+        },
+        // atualizando a variável reativa com o resultado da query
+        onCompleted(data) {
+            if (data.livros) livrosVar(data.livros);
+        }
+    })
+}
+```
+
+Com isso, podemos encapsular toda a parte de consulta em um código à parte, que chama a `useQuery` e atualiza o estado da variável reativa, e então usar somente a variável reativa no componente por meio do hook `useReactiveVar`, separando as responsabilidades.
+
 ## Dicas extras
 
 - O React possui a biblioteca `Intl` que auxilia na internacionalização de alguns dados, devolvendo-os formatado adequadamente à localização da pessoa usuária. Por exemplo, para devolver um número no formato da moeda brasileira, podemos criar uma função formatadora:
@@ -288,9 +576,37 @@ Após isso, você pode rodar a aplicação em modo de desenvolvimento com o segu
 
 A aplicação irá rodar no endereço http://localhost:3000.
 
-Para a parte de autenticação e autorização, também é necessário instalar a API que irá rodar localmente. Após o download/clone do projeto [neste repositório](https://github.com/viniciosneves/api-alurabooks), rode os comandos abaixo:
+### Primeira API 
+
+Para a parte de autenticação e autorização, bem como para recuperar dados de livros, é necessário instalar a API que irá rodar localmente. Após o download/clone do projeto [neste repositório](https://github.com/viniciosneves/api-alurabooks), rode os comandos abaixo:
 
     npm install
     npm run start-auth
 
 A API irá rodar no endereço http://localhost:8000.
+
+### Segunda API
+
+O curso de GraphQL incluiu uma segunda API mockada, contando também com um Apollo Server. O projeto pode ser baixado/clonado [deste repositório](https://github.com/alura-cursos/alurabooks-gql). Para instalação o comando é o mesmo:
+
+```bash
+npm install
+```
+
+Nesta segunda API, precisaremos de dois terminais, pois iremos rodar dois serviços (a API e o GraphQL). No primeiro terminal, digite o seguinte comando para subir o servidor do GraphQL:
+
+```bash
+$ npm run start:dev
+```
+
+O GraphQL irá rodar no endereço: http://localhost:9000/graphql
+
+No segundo terminal, execute o comando abaixo para subir a API mockada de fato(onde estão os dados):
+
+```bash
+$ npm run start:api
+```
+
+A API irá rodar no endereço http://localhost:8000. Observe que é o **mesmo endereço** da primeira API, ou seja, rode somente uma delas para fazer os testes. 
+
+- ambas APIs mockadas têm a mesma estrutura de base de dados (a segunda contém mais dados). Tanto faz qual você subir, a aplicação irá funcionar. As únicas exceções são os usuários que você tenha cadastrado via modal de cadastro do site, ou livros que tenha deletado da página de pedidos. Nestes casos, essas mudanças serão refletidas somente na base de dados da API que estiver rodando no momento das suas ações.

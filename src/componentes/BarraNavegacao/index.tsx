@@ -9,13 +9,14 @@ import ModalLogin from "../ModalLogin"
 import { useGetToken, useLimparToken } from "../../hooks/token"
 import { ICategoria } from "../../interfaces/ICategoria"
 import http from "../../http"
+import { useCategorias } from "../../graphql/categorias/hooks"
 
 const BarraNavegacao = () => {
     const token = useGetToken();
     const [modalCadastroAberta, setModalCadastroAberta] = useState(false);
     const [modalLoginAberta, setModalLoginAberta] = useState(false);
     const [usuarioLogado, setUsuarioLogado] = useState(token !== null);
-    const [categorias, setCategorias] = useState<ICategoria[]>([]);
+    // const [categorias, setCategorias] = useState<ICategoria[]>([]); // caso for usar o Axios
     const navigate = useNavigate()
     const removerToken = useLimparToken();
 
@@ -26,13 +27,17 @@ const BarraNavegacao = () => {
         navigate('/');
     }
 
-    useEffect(() => {
-        http.get<ICategoria[]>('categorias')
-            .then(res => {
-                setCategorias(res.data)
-            })
-            .catch(err => console.log(err))
-    }, [])
+    // Solução com GRAPHQL encapsulado em um hook customizado
+    const { data } = useCategorias();
+
+    // solução com o Axios
+    // useEffect(() => {
+    //     http.get<ICategoria[]>('categorias')
+    //         .then(res => {
+    //             setCategorias(res.data)
+    //         })
+    //         .catch(err => console.log(err))
+    // }, [])
 
     return (<nav className="ab-navbar">
         <h1 className="logo">
@@ -44,7 +49,7 @@ const BarraNavegacao = () => {
             <li>
                 <a href="#!">Categorias</a>
                 <ul className="submenu">
-                    {categorias.map(categoria => (
+                    {data?.categorias.map(categoria => (
                         <li key={categoria.id}>
                             <Link to={`/categorias/${categoria.slug}`}>
                                 {categoria.nome}

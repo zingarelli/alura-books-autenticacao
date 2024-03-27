@@ -10,17 +10,23 @@ import './Home.css'
 import { useQuery } from "@tanstack/react-query"
 import { obterLancamentos, obterMaisVendidos } from "../../http"
 import Loader from "../../componentes/Loader"
+import { useLancamentos, useMaisVendidos } from "../../graphql/livros/hooks"
 
 const Home = () => {
     const [busca, setBusca] = useState("")
-    const { data: lancamentos, isLoading: carregandoLancamentos } = useQuery(
-        ['lancamentos'],
-        obterLancamentos
-    )
-    const { data: maisVendidos, isLoading: carregandoMaisVendidos } = useQuery(
-        ['maisVendidos'],
-        obterMaisVendidos
-    )
+
+    const { data: dadosLancamentos, loading: carregandoLancamentos } = useLancamentos();
+    const { data: dadosMaisVendidos, loading: carregandoMaisVendidos } = useMaisVendidos();
+    
+    // solução com React Query
+    // const { data: lancamentos, isLoading: carregandoLancamentos } = useQuery(
+    //     ['lancamentos'],
+    //     obterLancamentos
+    // )
+    // const { data: maisVendidos, isLoading: carregandoMaisVendidos } = useQuery(
+    //     ['maisVendidos'],
+    //     obterMaisVendidos
+    // )
 
     return (<section className="home">
         <Banner subtitulo="Encontre em nossa estante o que precisa para seu desenvolvimento!" titulo="Já sabe por onde começar?">
@@ -37,11 +43,12 @@ const Home = () => {
         <Titulo texto="ÚLTIMOS LANÇAMENTOS" />
         {carregandoLancamentos
             ? <Loader />
-            : <LivrosDestaque livros={lancamentos ?? []} />}
+            // : <LivrosDestaque livros={lancamentos ?? []} />}
+            : <LivrosDestaque livros={dadosLancamentos?.destaques.lancamentos ?? []} />}
         <Titulo texto="MAIS VENDIDOS" />
         {carregandoMaisVendidos 
             ? <Loader />
-            : <LivrosDestaque livros={maisVendidos ?? []} />}        
+            : <LivrosDestaque livros={dadosMaisVendidos?.destaques.maisVendidos ?? []} />}        
         <TagsCategorias />
         <Newsletter />
     </section>)

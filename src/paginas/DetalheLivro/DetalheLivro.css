@@ -41,6 +41,11 @@
     border-bottom: 2px solid #EB9B00;
 }
 
+.detalhesLivro__tags {
+    display: flex;
+    column-gap: 12px;
+}
+
 .detalhes__titulo, 
 .detalhes__formato,
 .detalhesLivro__subtitulo {

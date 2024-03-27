@@ -1,4 +1,17 @@
+import { IAutor } from "./IAutor"
 import { IOpcaoCompra } from "./IOpcaoCompra"
+import { ITag } from "./ITag"
+
+export interface ILivroEAutor {
+    id: number
+    titulo: string
+    descricao: string
+    imagemCapa: string
+    autor: IAutor
+    opcoesCompra: IOpcaoCompra[]
+    sobre: string
+    tags: ITag[]
+}
 
 // nova interface (dados da API)
 export interface ILivro {

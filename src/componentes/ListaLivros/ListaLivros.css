@@ -6,3 +6,13 @@
     max-width: 80%;
     margin: 24px auto;
 }
+
+.buscaPorTitulo {
+    max-width: 80%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.buscaPorTitulo__botao {
+    margin: 16px;
+}
