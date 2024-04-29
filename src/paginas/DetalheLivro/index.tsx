@@ -53,11 +53,12 @@ const DetalheLivro = () => {
     const aoAdicionarItemCarrinho = () => {
         const opcaoSelecionada = livro.opcoesCompra.find(item => item.id === opcao?.id)
         if (!opcaoSelecionada) {
-            alert('Por favor, selecione uma opcao de compra!')
+            alert('Por favor, selecione uma opcao de compra!');
             return;
         }
         if (quantidade === 0){
             alert('Por favor, selecione a quantidade!');
+            return;
         }
         adicionarItemCarrinho({
             livroId: livro.id,
