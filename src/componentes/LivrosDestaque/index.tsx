@@ -46,7 +46,7 @@ const LivrosDestaque = ({ livros }: LivrosDestaqueProps) => {
                         <strong>{Intl.NumberFormat('pt-br', {style: 'currency', currency: 'BRL'}).format(precoMaisBarato(selecionado.opcoesCompra))}</strong>
                     </div>
                     <div>
-                        <AbBotao texto="Comprar" />
+                        <AbBotao texto="Ver mais" />
                     </div>
                 </footer>
             </div>

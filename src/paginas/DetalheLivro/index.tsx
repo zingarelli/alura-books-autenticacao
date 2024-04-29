@@ -1,4 +1,4 @@
-import { AbBotao, AbGrupoOpcoes, AbInputQuantidade, AbTag } from "ds-alurabooks";
+import { AbBotao, AbGrupoOpcao, AbGrupoOpcoes, AbInputQuantidade, AbTag } from "ds-alurabooks";
 import { IOpcaoCompra } from "../../interfaces/IOpcaoCompra";
 import { formataMoeda } from "../../utils/formatadores";
 import "./DetalheLivro.css";
@@ -13,6 +13,7 @@ import { useState } from "react";
 import { useLivroPorSlug } from "../../graphql/livros/hooks";
 import { livroVar } from "../../graphql/livros/state";
 import { useReactiveVar } from "@apollo/client";
+import { useCarrinhoContext } from "../../context/carrinho";
 
 // convert em um objeto no formato esperado pelo <AbGrupoOpcoes>
 const transformaEmGrupoOpcao = (opcao: IOpcaoCompra) => {
@@ -31,6 +32,10 @@ const transformaOpcoes = (grupoOpcoes: IOpcaoCompra[]) => {
 const DetalheLivro = () => {
     const { slug } = useParams();
     const [quantidade, setQuantidade] = useState(0);
+    const [opcao, setOpcao] = useState<AbGrupoOpcao>();
+
+    // função que adiciona o item ao carrinho de compras
+    const { adicionarItemCarrinho } = useCarrinhoContext();
 
     const { loading, error } = useLivroPorSlug(slug || '')
     const livro = useReactiveVar(livroVar)
@@ -43,6 +48,24 @@ const DetalheLivro = () => {
         console.log('Erro no componente DetalheLivro:');
         console.log(error);
         return <h2 className="erroLivro">Que vergonha! Alguma coisa deu errado!</h2>
+    }
+
+    const aoAdicionarItemCarrinho = () => {
+        const opcaoSelecionada = livro.opcoesCompra.find(item => item.id === opcao?.id)
+        if (!opcaoSelecionada) {
+            alert('Por favor, selecione uma opcao de compra!')
+            return;
+        }
+        if (quantidade === 0){
+            alert('Por favor, selecione a quantidade!');
+        }
+        adicionarItemCarrinho({
+            livroId: livro.id,
+            livro,
+            opcaoCompra: opcaoSelecionada,
+            quantidade
+        })
+        alert('Livro adicionado ao carrinho!');
     }
 
     // Solução com React Query
@@ -86,13 +109,17 @@ const DetalheLivro = () => {
                     {/* <p className="detalhes__autor">Por: {autor?.nome}</p> */}
                     <p className="detalhes__formato"><strong>Selecione o formato do seu livro</strong></p>
                     <div className="detalhes__opcoes">
-                        <AbGrupoOpcoes opcoes={transformaOpcoes(livro.opcoesCompra)} />
+                        <AbGrupoOpcoes 
+                            opcoes={transformaOpcoes(livro.opcoesCompra)} 
+                            onChange={setOpcao}
+                            valorPadrao={opcao}
+                        />
                     </div>
                     <p className="detalhes__observacao">*Você terá acesso às futuras atualizações do livro.</p>
                     <div className="detalhes__quantidade">
                         <AbInputQuantidade onChange={setQuantidade} value={quantidade} />
                     </div>
-                    <AbBotao texto="Comprar" />
+                    <AbBotao texto="Comprar" onClick={aoAdicionarItemCarrinho} />
                 </div>
             </section>
             <section className="detalhesLivro__section">
@@ -105,7 +132,7 @@ const DetalheLivro = () => {
                 <p>{livro.sobre}</p>
             </section>
             <div className="detalhesLivro__tags">
-                {livro.tags?.map( tag => <AbTag key={tag.id} texto={tag.nome} contexto="secundario" />)}
+                {livro.tags?.map(tag => <AbTag key={tag.id} texto={tag.nome} contexto="secundario" />)}
             </div>
         </article>
         }

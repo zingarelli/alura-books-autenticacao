@@ -1,6 +1,6 @@
 # Alura Books versão TypeScript
 
-Neste projeto, temos algumas telas já implementadas para um e-commerce de livros chamado Alura Books. Nosso objetivo é evoluir a aplicação, fazendo requisições a uma API para criar novas telas e implementar políticas de autenticação/autorização. Para isso, utilizamos inicialmente Axios, passamos pelo React Query e finalizamos com Apollo Cliente e GraphQL.
+Neste projeto, temos algumas telas já implementadas para um e-commerce de livros chamado Alura Books. Nosso objetivo é evoluir a aplicação, fazendo requisições a uma API para criar novas telas, implementar políticas de autenticação/autorização, além fazer o fluxo de adicionar e remover itens ao carrinho de compras. Para isso, utilizamos inicialmente Axios, passamos pelo React Query e finalizamos com Apollo Client e GraphQL.
 
 | :placard: Vitrine.Dev |     |
 | -------------  | --- |
@@ -22,23 +22,50 @@ Uma segunda API mockada é utilizada nos cursos de Apollo Client e GraphQL. O pr
 
 ## Detalhes do projeto
 
-Este é um projeto em evolução que é construído nos cursos da trilha de formação da Alura, chamada de ["React: consumindo APIs"](https://cursos.alura.com.br/formacao-react-consumindo-apis). Em cada curso, lidamos com um tópico diferente (autenticação, React Query e GraphQL). Detalhes sobre o projeto e cada tópico aprendido são dados nas seções a seguir.
+Este é um projeto construído ao longo dos cursos da trilha de formação da Alura, chamada de ["React: consumindo APIs"](https://cursos.alura.com.br/formacao-react-consumindo-apis). Em cada curso, lidamos com um tópico diferente (autenticação, React Query e GraphQL). Detalhes sobre o projeto e cada tópico aprendido são dados nas seções a seguir.
 
 *Observação:* a formação inicia com um curso sobre desenvolvimento de uma biblioteca de componentes, que incluiu a utilização do Storybook e publicação no NPM. O projeto está separado [neste outro repositório](https://github.com/zingarelli/alura-books-ds), pois houve problemas de incompatibilidade com o projeto inicial disponibilizado para acompanhamento dos outros cursos, então a biblioteca que eu desenvolvi não pôde ser reaproveitada.
 
 O código foi desenvolvido em React com TypeScript. Há comunicação com uma API mockada rodando localmente. Por meio dela é possível fazer o login/cadastro da pessoa usuária, além de requisições para obter dados de pedidos, categorias, livros e autores. Utilizamos tanto o Axios e o [React Query](#react-query), quanto o [Apollo Client e GraphQL](#apollo-client-e-graphql) para fazer requisições e consultas à API. Na [Seção sobre Instalação](#instalação) há detalhes de como instalar e subir cada API.
 
-Páginas construídas:
+### Páginas construídas:
 
-- Modal de Login;
+#### Modal de Login
 
-- Modal de cadastro;
+A autenticação é feita na API, que informa se foi ou não bem sucedida.
 
-- Página de pedidos: somente pode ser acessada após login. Internamente, é enviado um token de acesso à API para conseguir consultar os pedidos;
+![tela de login](https://github.com/zingarelli/alura-books-typescript/assets/19349339/a4dbab4f-7fd1-4d06-b828-a1a8c521506a)
 
-- Livros por categoria: ao selecionar uma categoria no menu superior do site, a página é carregada com os livros dessa categoria;
+#### Modal de cadastro
 
-- Detalhes de um livro: ao clicar no botão "Comprar" de um livro, é carregada a página de detalhes desse livro, além de opções para escolher o formato (e-book, impresso, combo) e quantidade;
+Uma requisição POST é enviada à API para registro do usuário.
+
+![tela de cadastro](https://github.com/zingarelli/alura-books-typescript/assets/19349339/83eee302-a750-438f-855c-5d2f7730a482)
+
+
+#### Página de pedidos
+
+Somente pode ser acessada após login. Internamente, é enviado um token de acesso à API para conseguir consultar os pedidos.
+
+![tela da conta do usuário, exibindo os pedidos efetuados](https://github.com/zingarelli/alura-books-typescript/assets/19349339/f4e09b52-5dca-42b9-80e6-b8356902e579)
+
+#### Livros por categoria
+
+Ao selecionar uma categoria no menu superior do site, a página é carregada com os livros dessa categoria;
+
+![gif mostrando a seleção de livros da categoria "Front End"](https://github.com/zingarelli/alura-books-typescript/assets/19349339/a4011c35-bc54-4d6b-a358-d7d476ebc8bb)
+
+#### Detalhes de um livro
+
+Ao clicar no botão "Ver detalhes" de um livro na galeria de livros, é carregada uma página com os detalhes desse livro, que traz ainda opções para escolher o formato (e-book, impresso, combo), a quantidade, e um botão para comprar. Quando clicado em "Comprar", o livro é adicionado ao carrinho, com a quantidade e formato selecionados;
+
+![git fom a interação de selecionar formato e quantidade de um livro e adicioná-lo ao carrinho ao clickar no botão de comprar](https://github.com/zingarelli/alura-books-typescript/assets/19349339/fb4e8919-5166-4a73-aaef-d34336a10146)
+
+#### Carrinho de compras
+
+Página interativa que exibe todos os itens adicionados ao carrinho. Nela é possível alterar a quantidade e remover um item. O valor total da compra é atualizado em tempo real. Além da página, é possível também visualizar um "mini-carrinho", que é exibido ao clicar no ícone de sacola que fica no topo da aplicação. O mini-carrinho mostra o título e autor dos livros que estão no carrinho, bem como um botão para ver a página completa do carrinho.
+
+![gif com a interação de alterar a quantidade de um livro do carrinho, bem como remover um livro](https://github.com/zingarelli/alura-books-typescript/assets/19349339/d79bb13e-9ce5-401b-8e29-a7c97f25599f)
 
 ## Lidando com autenticação
 
@@ -451,7 +478,26 @@ const { data } = useQuery<{ livros: ILivro[] }>(OBTER_LIVROS, {
 })
 ```
 
-- os parâmetros são opcionais. Quando não enviados à query, ela executa como se não houvesse um filtro. Ou seja, no exemplo acima, caso nenhum parâmetro fosse enviado, `data` retornaria os campos solicitados para os livros de todas as categorias.
+- neste exemplo, o parâmetros é opcional. Quando não enviado à query, ela executa como se não houvesse um filtro. Ou seja, no exemplo acima, caso nenhum parâmetro fosse enviado, `data` retornaria os campos solicitados para os livros de todas as categorias.
+
+- é possível criar parâmetros que sejam obrigatórios. Para isso, adicione `!` após o tipo. Ao tornar um parâmetro obrigatório, caso ele não seja enviado, será retornado um erro. Exemplo de query com parâmetro obrigatório:
+
+```ts
+const OBTER_LIVROS = gql`
+  query ObterLivros($categoriaId: Int!) {
+    livros(categoriaId: $categoriaId) {
+      id,
+      imagemCapa,
+      slug,
+      titulo,
+      opcoesCompra {
+        preco,
+        id
+      }
+    }
+  }
+`
+```
 
 ### `refetch`
 
@@ -517,7 +563,6 @@ const livros = useReactiveVar(livrosVar)
 
 - se fosse usado `const livros = livrosVar()`, a variável `livros`somente receberia o *valor* de `livrosVar`, mas não se tornaria uma variável de estado (o componente não re-renderizaria caso `livrosVar` fosse modificado).
 
-
 #### Unindo variáveis reativas com o `useQuery`
 
 Podemos atualizar o valor de uma variável reativa usando outra opção disponível no segundo parâmetro do `useQuery`: a função callback `onCompleted`. Essa função é chamada quando a query é finalizada com sucesso.
@@ -538,6 +583,61 @@ export const useLivros = (categoria: ICategoria) => {
 ```
 
 Com isso, podemos encapsular toda a parte de consulta em um código à parte, que chama a `useQuery` e atualiza o estado da variável reativa, e então usar somente a variável reativa no componente por meio do hook `useReactiveVar`, separando as responsabilidades.
+
+### Mutations
+
+Mutation é a forma de adicionar/atualizar dados no GraphQL. As mutations que estão disponíveis para uso são listadas na aba "DOCS" do playground (imagino que a pessoa responsável pelo back-end cria essas mutations). 
+
+Para usar uma mutation no GraphQL, usamos a palavra-chave `mutation`, damos um nome a ela, e então adicionamos a mutation que queremos usar, passando os parâmetros se necessário.
+
+```graphql
+mutation MinhaMutation($id: Int!) {
+  nomeDaMutation(id: $id)
+}
+```
+
+#### `useMutation`
+
+Este é o hook que utilizamos para executar uma mutation. Ele devolve uma tupla, sendo que o primeiro elemento é a função que executa a mutation no graphQL (podemos dar o nome que quisermos a essa função). O segundo elemento é um objeto com os resultados da execução da mutation; dentre eles, temos a propriedade booleana `loading`, que é true se a query ainda estão em execução. 
+
+Basta então executar a função retornada pelo `useMutation` e, caso a mutation precise de algum parâmetro, enviamos à função em um objeto com a propriedade `variables`. 
+
+```ts
+const ADICIONAR_ITEM = gql`
+mutation AdicionarItem($item: ItemCarrinhoInput!) {
+  adicionarItem(item: $item)
+}
+`
+
+const [nomeParaAFuncao, { loading }] = useMutation(ADICIONAR_ITEM);
+
+const adicionarItemCarrinho = (item: IItemCarrinho) => {
+    nomeParaAFuncao({
+        variables: {
+            item: {
+                livroId: item.livroId,
+                opcaoCompraId: item.opcaoCompra.id,
+                quantidade: item.quantidade
+            }
+        }
+    })
+}
+```
+
+##### `refetchQueries`
+
+O `useMutation` aceita um segundo parâmetro, que é um objeto com opções. Uma dessas opções é a propriedade chamada `refetchQueries`. Ela é um array em que você pode passar as queries que deseja que sejam executadas novamente após uma mutation. Por exemplo, após uma mutation que modifica a quantidade de um item do carrinho, você pode solicitar o refetch da query que obtém dados do carrinho, de modo a receber os itens e valores atualizados.
+
+  - esse array aceita tanto uma string com o nome de uma query que já foi executada (query nomeada dentro de um gql) quanto uma variável que tenha a template literals com a função `gql` da query.
+
+```ts
+const adicionarAoCarrinho = useMutation(ADICIONAR_ITEM, {
+    // faço novamente a query de obter carrinho toda vez que a função de mutation for 
+    // chamada, de modo a atualizar o carrinho. OBTER_CARRINHO é uma variável que contém
+    // a template literals com a função gql que executa uma query chamada obterCarrinho
+    refetchQueries: [OBTER_CARRINHO]
+});
+```
 
 ## Dicas extras
 
@@ -601,7 +701,7 @@ $ npm run start:dev
 
 O GraphQL irá rodar no endereço: http://localhost:9000/graphql
 
-No segundo terminal, execute o comando abaixo para subir a API mockada de fato(onde estão os dados):
+No segundo terminal, execute o comando abaixo para subir a API mockada de fato (onde estão os dados):
 
 ```bash
 $ npm run start:api

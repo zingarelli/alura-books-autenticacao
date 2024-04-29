@@ -1,0 +1,80 @@
+.carrinho__wrapper {
+    margin-bottom: 3em;
+    position: relative;
+}
+
+.carrinho__conteudo {
+    width: 80%;
+    margin: auto;
+}
+
+.carrinho__conteudo>hr {
+    border: none;
+    border-top: 1px solid #000;
+    margin: 1em 0 2em
+}
+
+.carrinho__footer {
+    display: flex;
+    justify-content: flex-end;
+    column-gap: 20px;
+}
+
+.carrinhoItem {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2em;
+}
+
+.carrinhoItem__livro,
+.carrinhoItem__acoes {
+    display: flex;
+    align-items: flex-start;
+}
+
+.carrinhoItem__livro {
+    column-gap: 20px;
+    width: 40%;
+}
+
+.carrinhoItem__acoes {
+    column-gap: 40px;
+}
+
+.carrinhoItem__capa {
+    width: 112px;
+}
+
+.carrinhoItem__titulo {
+    margin: 0 0 1em 0;
+    color: #002F52;
+}
+
+.carrinhoItem__preco {
+    text-align: center;
+}
+
+.carrinhoItem__preco>* {
+    margin: 0 0 .5em 0;
+}
+
+.carrinhoItem__preco strong {
+    color: #002F52;
+}
+
+.carrinhoItem__lixeira {
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.carrinho__overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, .25);
+    text-align: center;
+    padding-top: 30vh;
+}

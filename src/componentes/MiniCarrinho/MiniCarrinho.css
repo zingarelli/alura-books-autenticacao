@@ -1,0 +1,51 @@
+.miniCarrinho__container {
+    position: absolute;
+    top: 70px;
+    left: -130px;
+    width: 330px;
+    height: 50vh;
+    overflow-y: scroll;
+    border: solid 1px #002F52;
+    box-shadow: 4px 4px 4px rgba(0,0,0,.25);
+    background: #FFF;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 24px;
+    z-index: 1000;
+}
+
+.miniCarrinho__titulo {
+    color: #EB9B00;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.miniCarrinho__lista {
+    display: block;
+}
+
+.miniCarrinho__item:not(:last-child) {    
+    border-bottom: 1px solid #EB9B00;
+    padding-bottom: 32px;
+    margin-bottom: 32px;
+}
+
+
+.miniCarrinho__itemTitulo {
+    color: #002F52;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+}
+
+.miniCarrinho__itemAutor {
+    font-size: 16px;
+    font-weight: 400;
+    margin: 0;
+}
+
+.miniCarrinho__container>button {
+    align-self: flex-start;
+}

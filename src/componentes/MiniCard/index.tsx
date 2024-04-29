@@ -16,7 +16,7 @@ const MiniCard = ({ livro }: MiniCardProps) => {
         <img src={livro.imagemCapa} alt={`capa do livro ${livro.titulo}`} className="minicard__capa" />
         <h4 className="minicard__titulo">{livro.titulo}</h4>
         <p className="minicard__texto">A partir de: <strong>{formataMoeda.format(precoMaisBarato(livro.opcoesCompra))}</strong></p>
-        <AbBotao texto="Comprar" onClick={() => navigate(`/livro/${livro.slug}`)} />
+        <AbBotao texto="Ver detalhes" onClick={() => navigate(`/livro/${livro.slug}`)} />
     </section>)
 }
 

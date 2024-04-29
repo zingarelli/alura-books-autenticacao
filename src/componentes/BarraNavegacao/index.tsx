@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import BotaoNavegacao from "../BotaoNavegacao"
 import logo from './assets/logo.png'
 import usuario from './assets/usuario.svg'
+import sacola from './assets/sacola.png'
 import './BarraNavegacao.css'
 import ModalCadastroUsuario from "../ModalCadastroUsuario"
 import ModalLogin from "../ModalLogin"
@@ -10,11 +11,13 @@ import { useGetToken, useLimparToken } from "../../hooks/token"
 import { ICategoria } from "../../interfaces/ICategoria"
 import http from "../../http"
 import { useCategorias } from "../../graphql/categorias/hooks"
+import MiniCarrinho from "../MiniCarrinho"
 
 const BarraNavegacao = () => {
     const token = useGetToken();
     const [modalCadastroAberta, setModalCadastroAberta] = useState(false);
     const [modalLoginAberta, setModalLoginAberta] = useState(false);
+    const [modalCarrinhoAberto, setModalCarrinhoAberto] = useState(false);
     const [usuarioLogado, setUsuarioLogado] = useState(token !== null);
     // const [categorias, setCategorias] = useState<ICategoria[]>([]); // caso for usar o Axios
     const navigate = useNavigate()
@@ -96,6 +99,18 @@ const BarraNavegacao = () => {
             {usuarioLogado && <>
                 <li>
                     <Link to='/minha-conta/pedidos'>Minha conta</Link>
+                </li>
+                <li>
+                    <BotaoNavegacao
+                        imagemSrc={sacola}
+                        textoAltSrc="Ícone de uma sacola de compras"
+                        // abre/fecha modal do carrinho
+                        onClick={() => setModalCarrinhoAberto(prevState => !prevState)}
+                    />
+                    <MiniCarrinho
+                        aberta={modalCarrinhoAberto}
+                        aoFechar={() => setModalCarrinhoAberto(false)}
+                    />
                 </li>
                 <li>
                     <BotaoNavegacao
